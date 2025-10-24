@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "manage.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/media/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "manage.py"
+    }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "fashion.settings",
+    "SECRET_KEY": "django-insecure-%vy8$8d6$jah0=bk63#fvyr#@)did)1m*ilrwv+6sj-hr=k@kf",
+    "DEBUG": "False",
+    "ALLOWED_HOSTS": "your-vercel-domain.vercel.app",
+  }
+}
