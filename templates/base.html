@@ -30,10 +30,58 @@
         <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css" />
         <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css" />
         <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" />
+        <link rel="stylesheet" href="{% static 'css/custom-ui.css' %}" type="text/css" />
     </head>
 
     <body>
         {% block content %}{% endblock %}
+
+        <!-- Slide-Over Cart Drawer -->
+        <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+        <div class="cart-drawer" id="cartDrawer">
+            <div class="cart-drawer-header">
+                <h5>Your Shopping Cart</h5>
+                <button class="cart-drawer-close" id="cartDrawerClose">&times;</button>
+            </div>
+            <div class="cart-drawer-body" id="cartDrawerBody">
+                <p class="text-center text-muted py-4">Click "View Cart" below to manage your order items.</p>
+            </div>
+            <div class="cart-drawer-footer">
+                <a href="{% url 'shop:product_cart' %}" class="primary-btn w-100 text-center">View Full Cart</a>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Navigation (<768px) -->
+        <nav class="mobile-bottom-nav">
+            <a href="{% url 'web:index' %}" class="mobile-nav-item {% if active_menu_item == 'home' %}active{% endif %}">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'shop:product_all' %}" class="mobile-nav-item {% if active_menu_item == 'shop' %}active{% endif %}">
+                <i class="fa fa-th-large"></i>
+                <span>Shop</span>
+            </a>
+            <a href="{% url 'shop:product_wishlist' %}" class="mobile-nav-item">
+                <i class="fa fa-heart"></i>
+                <span>Wishlist</span>
+            </a>
+            <a href="{% url 'shop:product_cart' %}" class="mobile-nav-item">
+                <i class="fa fa-shopping-bag"></i>
+                <span>Cart (<span class="cart-count">{{cart_count}}</span>)</span>
+            </a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'user_profile:profile_details' %}" class="mobile-nav-item">
+                <i class="fa fa-user"></i>
+                <span>Account</span>
+            </a>
+            {% else %}
+            <a href="{% url 'user:login' %}" class="mobile-nav-item">
+                <i class="fa fa-sign-in-alt"></i>
+                <span>Login</span>
+            </a>
+            {% endif %}
+        </nav>
+
         <!-- Js Plugins -->
         <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -47,5 +95,7 @@
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/script.js' %}"></script>
+        <script src="{% static 'js/custom-ui.js' %}"></script>
     </body>
 </html>
+

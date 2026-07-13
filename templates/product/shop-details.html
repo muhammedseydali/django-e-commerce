@@ -82,11 +82,12 @@
                                     <input type="text" value="1" />
                                 </div>
                             </div>
-                            <a href="#" class="primary-btn">add to cart</a>
+                            <a href="#" class="primary-btn add-to-cart" data-product-id="{{product.id}}">add to cart</a>
                         </div>
                         <div class="product__details__btns__option">
-                            <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
+                            <a href="#" class="add-to-wishlist" data-product-id="{{product.id}}"><i class="fa fa-heart"></i> add to wishlist</a>
                         </div>
+
                         <div class="product__details__last__option">
                                 <li><span>Categories:</span> {{product.category}}</li>
                             </ul>

@@ -1,0 +1,560 @@
+/* ==========================================================================
+   Modern Custom UI Design System for Django E-Commerce
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --font-primary: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+  
+  --primary-color: #0f172a;
+  --primary-hover: #1e293b;
+  --accent-color: #e53637;
+  --accent-hover: #d32f2f;
+  
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border-light: rgba(226, 232, 240, 0.8);
+  --border-hover: rgba(203, 213, 225, 1);
+  
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  font-family: var(--font-secondary) !important;
+  color: var(--text-dark);
+  background-color: var(--bg-main);
+}
+
+h1, h2, h3, h4, h5, h6, .hero__text h2, .banner__item__text h2 {
+  font-family: var(--font-primary) !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   Sticky Glassmorphism Header
+   -------------------------------------------------------------------------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.header.scrolled {
+  box-shadow: var(--shadow-md);
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+.header__top {
+  background: var(--primary-color) !important;
+  color: #cbd5e1;
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.header__top__links a {
+  color: #f1f5f9 !important;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.header__top__links a:hover {
+  color: var(--accent-color) !important;
+}
+
+.header__menu ul li a {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-dark) !important;
+  padding: 24px 0;
+  transition: var(--transition);
+}
+
+.header__menu ul li:hover > a,
+.header__menu ul li.active > a {
+  color: var(--accent-color) !important;
+}
+
+.header__menu ul li .dropdown {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1px solid var(--border-light) !important;
+  padding: 12px 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Nav Icon Badges & User Avatar Dropdown
+   -------------------------------------------------------------------------- */
+.header__nav__option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.header__nav__option a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: rgba(241, 245, 249, 0.8);
+  transition: var(--transition);
+}
+
+.header__nav__option a:hover {
+  background: rgba(226, 232, 240, 1);
+  transform: translateY(-2px);
+}
+
+.header__nav__option .cart-count,
+.header__nav__option .wishlist-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--accent-color);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(229, 54, 55, 0.4);
+}
+
+.user-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.user-dropdown-btn:hover {
+  background: #e2e8f0;
+}
+
+/* --------------------------------------------------------------------------
+   Modern Product Cards
+   -------------------------------------------------------------------------- */
+.product__item {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  transition: var(--transition);
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-sm);
+}
+
+.product__item:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.product__item__pic {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.product__item__pic .product-img {
+  width: 100%;
+  height: 100%;
+}
+
+.product__item__pic .product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product__item:hover .product-img img {
+  transform: scale(1.06);
+}
+
+.product__hover {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.product__item:hover .product__hover {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.product__hover li a {
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+
+.product__hover li a:hover {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+.product__hover li a:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.product__item__text {
+  padding: 18px !important;
+}
+
+.product__item__text h6 {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product__item__text .rating {
+  color: #f59e0b;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.product__item__text h5 {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--accent-color);
+}
+
+.product__item__text .add-to-cart-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 0;
+  text-align: center;
+  background: var(--primary-color);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product__item__text .add-to-cart-btn:hover {
+  background: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(229, 54, 55, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   Hero & Category Banners
+   -------------------------------------------------------------------------- */
+.hero__items {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.hero__text {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  padding: 36px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-lg);
+}
+
+.banner__item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.banner__item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.primary-btn {
+  background: var(--accent-color) !important;
+  border-radius: var(--radius-full) !important;
+  padding: 14px 32px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 14px rgba(229, 54, 55, 0.4) !important;
+  transition: var(--transition) !important;
+}
+
+.primary-btn:hover {
+  background: var(--primary-color) !important;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Trust Badges Bar
+   -------------------------------------------------------------------------- */
+.trust-badges-bar {
+  background: #ffffff;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 40px 0;
+  margin-top: 60px;
+}
+
+.trust-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+}
+
+.trust-badge-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(229, 54, 55, 0.08);
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.trust-badge-text h6 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--text-dark);
+}
+
+.trust-badge-text p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Slide-Over Mini Cart Drawer
+   -------------------------------------------------------------------------- */
+.cart-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.cart-drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  background: #ffffff;
+  z-index: 10001;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-drawer.active {
+  transform: translateX(0);
+}
+
+.cart-drawer-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-drawer-header h5 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cart-drawer-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.cart-drawer-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.cart-drawer-footer {
+  padding: 20px;
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-main);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Bottom Navigation Bar (<768px)
+   -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-light);
+  z-index: 9999;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 767.98px) {
+  .mobile-bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  body {
+    padding-bottom: 64px;
+  }
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none !important;
+  gap: 4px;
+}
+
+.mobile-nav-item i {
+  font-size: 18px;
+}
+
+.mobile-nav-item.active,
+.mobile-nav-item:hover {
+  color: var(--accent-color);
+}
+
+/* --------------------------------------------------------------------------
+   Checkout Step Progress Bar
+   -------------------------------------------------------------------------- */
+.checkout-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.step-item.active {
+  color: var(--accent-color);
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: #e2e8f0;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.step-item.active .step-number {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+.step-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--border-light);
+}
