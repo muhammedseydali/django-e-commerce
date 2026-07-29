@@ -42,3 +42,7 @@ media/
 
 # Log files
 *.log
+
+# History generator script
+generate_github_history.sh
+
