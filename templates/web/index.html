@@ -88,29 +88,38 @@
                 </div>
                 <div class="row product__filter">
                     {% for product in products %}
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                    <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
                         <div class="product__item">
-                            <div class="product__item__pic set-bg" data-setbg="" >
+                            <div class="product__item__pic">
                                 <div class="product-img">
-                                    <img src="{{product.featured_image.url}}" alt="" />
+                                    <a href="{% url 'shop:product_details' product.slug %}">
+                                        <img src="{{product.featured_image.url}}" alt="{{product.title}}" />
+                                    </a>
                                 </div>
                                 <ul class="product__hover">
                                     <li>
-                                        <a href="#"><img src="{% static 'img/icon/heart.png' %}" alt="" /></a>
+                                        <a href="#" class="add-to-wishlist" data-product-id="{{product.id}}" title="Add to Wishlist">
+                                            <i class="fa fa-heart"></i>
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="product__item__text">
-                                <h6>{{product.title}}</h6>
-                                <a href="#" class="add-cart">+ Add To Cart</a>
+                                <a href="{% url 'shop:product_details' product.slug %}">
+                                    <h6>{{product.title}}</h6>
+                                </a>
+
                                 <div class="rating">
-                                    <i class="fa fa-star-o"></i>
-                                    <i class="fa fa-star-o"></i>
-                                    <i class="fa fa-star-o"></i>
-                                    <i class="fa fa-star-o"></i>
-                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-half-alt"></i>
                                 </div>
                                 <h5>₹{{product.price}}</h5>
+                                <a href="#" class="add-to-cart add-to-cart-btn" data-product-id="{{product.id}}">
+                                    <i class="fa fa-shopping-bag mr-1"></i> Add To Cart
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -118,6 +127,7 @@
                 </div>
             </div>
         </section>
+
         <!-- Product Section End -->
 
         {% comment %} <!-- Categories Section Begin -->

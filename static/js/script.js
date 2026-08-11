@@ -621,28 +621,29 @@ $(document).ready(function () {
         });
     });
 
-    $(".add-to-wishlist").click(function (event) {
+    $(document).on("click", ".add-to-wishlist", function (event) {
         event.preventDefault();
-        var $heartIcon = $(this).find("i");
-
-        // Toggle the classes
-        // if ($heartIcon.hasClass("far")) {
-        //     $heartIcon.removeClass("far").addClass("fas");
-        // } else {
-        //     $heartIcon.removeClass("fas").addClass("far");
-        // }
+        event.stopPropagation();
 
         var productId = $(this).data("product-id");
-        addToWishlist(productId);
+        if (!productId) return;
+        addToWishlist(productId, $(this));
     });
 
-    function addToWishlist(productId) {
+    function addToWishlist(productId, $btn) {
         $.ajax({
             url: "/shop/user/wishlist/add/" + productId + "/",
             dataType: "json",
             success: function (data) {
+                if (typeof data === "string" && data.includes("Login")) {
+                    window.location.href = "/user/login/?next=" + encodeURIComponent(window.location.pathname);
+                    return;
+                }
                 if (data) {
                     console.log("Added to wishlist");
+                    if ($btn) {
+                        $btn.find("i").removeClass("far fa-heart-o").addClass("fas fa-heart text-danger");
+                    }
                     const Toast = Swal.mixin({
                         toast: true,
                         position: "top-end",
@@ -661,16 +662,21 @@ $(document).ready(function () {
                     });
                 }
             },
-            error: function () {
-                console.log("Error adding to wishlist");
+            error: function (xhr) {
+                if (xhr.status === 200 || xhr.status === 302 || xhr.status === 401 || xhr.status === 403) {
+                    window.location.href = "/user/login/?next=" + encodeURIComponent(window.location.pathname);
+                } else {
+                    console.log("Error adding to wishlist");
+                }
             },
         });
     }
 
-    $(".remove-from-wishlist").click(function (event) {
-        event.preventDefault(); // Prevent the default link behavior
+    $(document).on("click", ".remove-from-wishlist", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-        var csrfToken = getCSRFToken(); // Get the CSRF token
+        var csrfToken = getCSRFToken();
         if (!csrfToken) {
             console.error("CSRF token not found.");
             return;
@@ -679,7 +685,7 @@ $(document).ready(function () {
 
         $.ajax({
             url: `/shop/user/wishlist/remove/${productId}/`,
-            method: "POST", // You can use POST or other appropriate method
+            method: "POST",
             dataType: "json",
             data: {
                 csrfmiddlewaretoken: csrfToken,
@@ -708,33 +714,37 @@ $(document).ready(function () {
                         icon: "warning",
                         title: "Removed From Wishlist",
                     });
-                } else {
                 }
             },
             error: function () {
-                // alert('An error occurred while processing your request.');
             },
         });
     });
 
-    $(".add-to-cart").click(function (event) {
-        event.preventDefault(); // Prevent the default link behavior
+    $(document).on("click", ".add-to-cart", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-        var csrfToken = getCSRFToken(); // Get the CSRF token
+        var csrfToken = getCSRFToken();
         if (!csrfToken) {
             console.error("CSRF token not found.");
             return;
         }
         var productId = $(this).data("product-id");
+        if (!productId) return;
 
         $.ajax({
             url: `/shop/user/cart/add/${productId}/`,
-            method: "POST", // You can use POST or other appropriate method
+            method: "POST",
             dataType: "json",
             data: {
                 csrfmiddlewaretoken: csrfToken,
             },
             success: function (data) {
+                if (typeof data === "string" && data.includes("Login")) {
+                    window.location.href = "/user/login/?next=" + encodeURIComponent(window.location.pathname);
+                    return;
+                }
                 if (data.success) {
                     console.log("cart");
                     const cartCounts = document.querySelectorAll(".cart-count");
@@ -759,12 +769,20 @@ $(document).ready(function () {
                         icon: "success",
                         title: "Added to cart",
                     });
-                } else {
+
+                    if (typeof window.openCartDrawer === "function") {
+                        window.openCartDrawer();
+                    }
                 }
             },
-            error: function () {
-                // alert('An error occurred while processing your request.');
+            error: function (xhr) {
+                if (xhr.status === 200 || xhr.status === 302 || xhr.status === 401 || xhr.status === 403) {
+                    window.location.href = "/user/login/?next=" + encodeURIComponent(window.location.pathname);
+                } else {
+                    console.log("Error adding to cart");
+                }
             },
         });
     });
 });
+

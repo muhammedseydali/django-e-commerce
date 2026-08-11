@@ -13,11 +13,10 @@ from user_profile.forms import AddressForm
 from shop.models import Order, Cart, OrderStatus
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_details(request):
-    if request.user.is_authenticated:
-        user = request.user
-        default_address = Address.objects.get(user=user, is_default=True)
+    user = request.user
+    default_address = Address.objects.filter(user=user, is_default=True).first()
     context = {
         "title": "Male Fashion | Profile Detail",
         "user": user,
@@ -27,7 +26,8 @@ def profile_details(request):
     return render(request, 'profile/user-profile.html', context)
 
 
-@login_required(login_url='user/login/')
+
+@login_required(login_url='/user/login/')
 def profile_change_password(request):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -40,7 +40,7 @@ def profile_change_password(request):
         return render(request, 'profile/change-password.html', context)
     
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_change_password(request):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -108,7 +108,7 @@ def profile_change_password(request):
         return render(request, 'profile/change-password.html', context)
     
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_edit(request):
     if request.method == "POST":
         form = CustomUserEditForm(request.POST, request.FILES, instance=request.user)
@@ -148,7 +148,7 @@ def profile_edit(request):
     
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_address_add(request):
     if request.method == "POST":
         form = AddressForm(request.POST)
@@ -160,9 +160,7 @@ def profile_address_add(request):
 
             default = request.POST.get('is_default')
             if default == 'on':
-                address = Address.objects.get(user=request.user, is_default=True)
-                address.is_default = False
-                address.save()
+                Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
                 instance.is_default = True
 
             instance.user = request.user
@@ -193,10 +191,10 @@ def profile_address_add(request):
         return render(request, 'user/address-input.html', context)
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_address(request):
     addresses = Address.objects.filter(user=request.user, is_default=False)
-    default_address = Address.objects.get(user=request.user, is_default=True)
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
 
     context = {
         "title" : "Male Fashion | My Address",
@@ -207,9 +205,9 @@ def profile_address(request):
     return render(request, 'profile/user-address.html', context)
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_address_edit(request, pk):
-    address = get_object_or_404(Address, id=pk)
+    address = get_object_or_404(Address, id=pk, user=request.user)
     if request.method == "POST":
         form = AddressForm(request.POST, instance=address)
         if form.is_valid():
@@ -217,9 +215,7 @@ def profile_address_edit(request, pk):
 
             default = request.POST.get('is_default')
             if default == 'on':
-                address = Address.objects.get(user=request.user, is_default=True)
-                address.is_default = False
-                address.save()
+                Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
                 instance.is_default = True
 
             instance.user = request.user
@@ -251,16 +247,14 @@ def profile_address_edit(request, pk):
         return render(request, 'profile/edit-address.html', context)
     
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_address_default(request, pk):
-    address = get_object_or_404(Address, id=pk)
-    default_address = Address.objects.get(user=request.user, is_default=True)
+    address = get_object_or_404(Address, id=pk, user=request.user)
+    Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
 
-    default_address.is_default = False
     address.is_default = True
-
     address.save()
-    default_address.save()
+
 
     response_data = {
         "status" : "success",
@@ -271,7 +265,7 @@ def profile_address_default(request, pk):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_address_delete(request, pk):
     address = get_object_or_404(Address, id=pk)
 
@@ -287,7 +281,7 @@ def profile_address_delete(request, pk):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_order(request):
     if request.method == "POST":
         pass
@@ -303,7 +297,7 @@ def profile_order(request):
         return render(request, 'profile/user-order.html', context)
     
 
-@login_required(login_url='user/login/')
+@login_required(login_url='/user/login/')
 def profile_order_cancel(request, pk):
     order = get_object_or_404(Order, id=pk)
     status = OrderStatus.objects.get(status="Cancelled")

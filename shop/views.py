@@ -58,7 +58,7 @@ def product_details(request, slug):
     return render(request, 'product/shop-details.html', context)
 
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_wishlist(request):
     if request.user.is_authenticated:
         products = Wishlist.objects.filter(user=request.user, is_deleted=False)
@@ -68,25 +68,15 @@ def product_wishlist(request):
         }
         return render(request, 'product/shop-wishlist.html', context)
     else:
-        return redirect('user:admin_login')
+        return redirect('user:login')
     
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_wishlist_add(request, pk):
     product = get_object_or_404(Product, id=pk)
 
-    if Wishlist.objects.filter(product=product).exists():
-        instance = Wishlist.objects.get(product=product)
-        # if instance.is_deleted == False:
-        #     response_data = {
-        #         "wishlist" : True,
-        #         "title" : "Already added",
-        #         "text" : "Product in Wishlist",
-        #         "type" : "success",
-        #     }
-
-        #     return HttpResponse(json.dumps(response_data), content_type="application/json")
-
+    if Wishlist.objects.filter(user=request.user, product=product).exists():
+        instance = Wishlist.objects.filter(user=request.user, product=product).first()
         instance.is_deleted = False
         instance.save()
     else:
@@ -96,15 +86,16 @@ def product_wishlist_add(request, pk):
         )
 
     data = {
-        "message" : "success"
+        "success": True,
+        "message": "success"
     }
 
     return JsonResponse(data)
 
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_wishlist_remove(request, pk):
-    product = get_object_or_404(Wishlist, id=pk)
+    product = get_object_or_404(Wishlist, id=pk, user=request.user)
 
     product.is_deleted = True
     product.save()
@@ -113,13 +104,14 @@ def product_wishlist_remove(request, pk):
     wishlist_count = wishlist_items.count()
 
     data = {
+        "success": True,
         "message": "success",
         "count": wishlist_count
     }
 
     return JsonResponse(data)
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_cart(request):
     products = Cart.objects.filter(user=request.user, is_deleted=False)
 
@@ -145,14 +137,15 @@ def product_cart(request):
     return render(request, 'product/shopping-cart.html', context)
 
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_cart_add(request, pk):
     product = get_object_or_404(Product, id=pk)
-    if Cart.objects.filter(product=product).exists():
-        instance = Cart.objects.get(product=product)
+    if Cart.objects.filter(user=request.user, product=product).exists():
+        instance = Cart.objects.filter(user=request.user, product=product).first()
         instance.is_deleted = False
-        instance.qty = 1
-        instance.total_price_of_product =  instance.product.price * instance.qty
+        if instance.qty < 1:
+            instance.qty = 1
+        instance.total_price_of_product = instance.product.price * instance.qty
         instance.save()
     else:
         Cart.objects.create(
@@ -161,18 +154,19 @@ def product_cart_add(request, pk):
             total_price_of_product=product.price
         )
     
-    cart_count = request.session.get('cart_count', 0)
-    count = request.session['cart_count'] = cart_count + 1
+    cart_count = Cart.objects.filter(user=request.user, is_deleted=False).count()
+    request.session['cart_count'] = cart_count
 
     response_data = {
-            "success" : True,
-            "title" : "Added to Cart",
-            "message" : "Product is in cart now",
-            "status" : "success",
-            "cart_count" : count
-        }
+        "success": True,
+        "title": "Added to Cart",
+        "message": "Product is in cart now",
+        "status": "success",
+        "cart_count": cart_count
+    }
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return JsonResponse(response_data)
+
 
 
 @login_required(login_url="user/login/")
@@ -234,33 +228,34 @@ def update_product_quantity(request, pk):
     return JsonResponse(data)
 
 
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_cart_remove(request, pk):
-    product = get_object_or_404(Cart, id=pk)
+    product = get_object_or_404(Cart, id=pk, user=request.user)
 
     product.is_deleted = True
 
     product.save()
 
-    cart_count = request.session.get('cart_count', 0)
-    if cart_count > 0:
-        count = request.session['cart_count'] = cart_count - 1
+    cart_count = Cart.objects.filter(user=request.user, is_deleted=False).count()
+    request.session['cart_count'] = cart_count
 
     response_data = {
             "status" : "success",
             "title" : "Successfully Removed",
             "message" : "Product has been Successfully removed.",
-            "cart_count" : count
+            "cart_count" : cart_count
         }
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 #checkout
-@login_required(login_url="user/login/")
+@login_required(login_url="/user/login/")
 def product_checkout(request):
+
     user_addresses = Address.objects.filter(user=request.user, is_default=False)
-    user_default_address = Address.objects.get(user=request.user, is_default=True)
+    user_default_address = Address.objects.filter(user=request.user, is_default=True).first()
+
 
     current_datetime = timezone.now()
 
@@ -373,6 +368,7 @@ def product_discount(request):
 
 
 
+@login_required(login_url="/user/login/")
 def product_order(request):
     if request.method == 'POST':
         user = request.user
@@ -380,26 +376,47 @@ def product_order(request):
         address = request.POST.get('address')
 
         products = Cart.objects.filter(user=user, is_deleted=False)
-        shipping_address = Address.objects.get(user=user, id=address)
-        order_status = OrderStatus.objects.get(status="Pending")
-        payment_type = PaymentMethod.objects.get(payment_type="COD")
+        if not products.exists():
+            return JsonResponse({
+                "status": "error",
+                "title": "Cart Empty",
+                "message": "Your cart is empty."
+            })
 
+        shipping_address = None
+        if address:
+            shipping_address = Address.objects.filter(user=user, id=address).first()
+        if not shipping_address:
+            shipping_address = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
 
-        if payment_method == "cash":
+        if not shipping_address:
+            return JsonResponse({
+                "status": "error",
+                "title": "Address Required",
+                "message": "Please add a shipping address before ordering."
+            })
+
+        order_status, _ = OrderStatus.objects.get_or_create(status="Pending")
+        payment_type, _ = PaymentMethod.objects.get_or_create(payment_type="COD")
+
+        if payment_method == "cash" or True:
             total_amount = 0
+            order = None
             for item in products:
                 order = Order.objects.create(
-                            product=item.product,
-                            user=user,
-                            shipping_address=shipping_address,
-                            order_status=order_status,
-                            product_qty = item.qty,
-                            order_total_price=item.product.price * item.qty
-                        )
-                item.product.stock_unit -= item.qty
+                    product=item.product,
+                    user=user,
+                    shipping_address=shipping_address,
+                    order_status=order_status,
+                    product_qty=item.qty,
+                    order_total_price=item.product.price * item.qty
+                )
+                item.product.stock_unit = max(0, item.product.stock_unit - item.qty)
+                item.product.save()
                 total_amount += item.total_price_of_product
 
-            Payment.objects.create(
+            if order:
+                Payment.objects.create(
                     order=order,
                     user=user,
                     payment_method=payment_type,
@@ -407,24 +424,19 @@ def product_order(request):
                     purchased_price=total_amount
                 )
             
-            for item in products:
-                item.is_deleted = True
-                item.qty = 1
-                item.total_price_of_product = item.product.price * item.qty
-                item.save()
+            products.update(is_deleted=True)
+            request.session['cart_count'] = 0
             
             response_data = {
-                    "status" : "success",
-                    "title" : "Order Purchased",
-                    "message" : "Your Product will be deliver shortly",
-                }
+                "status": "success",
+                "title": "Order Placed Successfully",
+                "message": "Thank you for your order! Your items will be delivered shortly.",
+            }
 
-            return HttpResponse(json.dumps(response_data), content_type="application/json")
-            
-        else:
-            pass
-    else:
-        pass
+            return JsonResponse(response_data)
+        
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
+
 
 
     

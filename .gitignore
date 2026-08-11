@@ -1,0 +1,48 @@
+# Python & Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# Database
+*.sqlite3
+db.sqlite3
+db.sqlite3-journal
+
+# Django Collected Static & Media Files
+staticfiles/
+media/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDEs and Text Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+
+# History generator script
+generate_github_history.sh
+
